@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MDP Parcel Viewer</title>
+    <meta charset="utf-8" />
+    <!--Define the versions of IE that will be used to render the page. See Microsoft documentation for details. Optional.-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <!-- End Responsive -->
+    <!-- Mobile -->
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+    <!-- SEO -->
+    <meta name="Keywords" content="FINDER Online" />
+    <meta name="Description" content="FINDER Online - Find Maryland's Parcel data by MDP." />
+    <!-- End SEO -->
+    <!-- Facebook -->
+    <meta property="og:title" content="FINDER Online" />
+    <meta property="og:image" content="images/item.png" />
+    <meta property="og:site_name" content="esri" />
+    <!-- End Facebook -->
+    <!--Use protocol relative urls that way if the browser is viewing the page via HTTPS the js/css file will be requested using the HTTPS protocol-->
+    <link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.12/esri/css/esri.css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato:300,400,700" />
+    <!--Load any application specific styles-->
+    <link rel="stylesheet" type="text/css" href="css/dijit.css" />
+    <link rel="stylesheet" type="text/css" href="css/fontello.css" />
+    <link rel="stylesheet" type="text/css" href="css/TableOfContents.css" />
+    <link rel="stylesheet" type="text/css" href="css/HomeButton.css" />
+    <link rel="stylesheet" type="text/css" href="css/LocateButton.css" />
+    <link rel="stylesheet" type="text/css" href="css/SimpleSlider.css" />
+    <link rel="stylesheet" type="text/css" href="css/popup.css" />
+    <link rel="stylesheet" type="text/css" href="css/dialogs.css" />
+    <link rel="stylesheet" type="text/css" href="css/geocoder.css" />
+    <link rel="stylesheet" type="text/css" href="css/ShareDialog.css" />
+    <link rel="stylesheet" type="text/css" href="css/FlickrLayer.css" />
+	<link rel="stylesheet" type="text/css" href="css/TwitterLayer.css" />
+	<link rel="stylesheet" type="text/css" href="css/WebcamsLayer.css" />
+	<link rel="stylesheet" type="text/css" href="css/InstagramLayer.css" />
+    <link rel="stylesheet" type="text/css" href="css/YoutubeLayer.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <!--[if IE 7]><link rel="stylesheet" type="text/css" href="css/fontello-ie7.css" /><![endif]-->
+	
+		<style type="text/css">
+#mapDiv .logo-med {
+background-image: url("http://planning.maryland.gov/images/homepage/agencyLogo-Planning.png");
+display: inline-block;
+vertical-align: bottom;
+width: 195px;
+height: 100px;
+z-index: 10;
+cursor: pointer;
+background-repeat: no-repeat;
+}
+	</style>
+	
+<!--from jquery site, might not need both. both will need to come before main.js-->
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	
+	
+		<script type="text/javascript">
+	//for the jquery drop down code from todmotto.com
+	$(function () {
+  $('.click-nav > ul').toggleClass('no-js js'); //target the no js element inside ul in click-nav; only pick the first child not the other ul; then toggle the classes no-js js; it removes the no-js class and adds js
+            //check for all 3 BUTTONS
+  //go to ul element inside .click-nav class that has no-js value for ul class = "no-js"
+  //if an element in the matched set of elements already has the class, then it is removed; if an element does not have the class, then it is added
+  //if works, now know user is running js if not does the fall back css
+  $('.click-nav .js ul').hide(); //then hide the .js ul ,  hiding so only show when click button...if not it will show on page load...HIDE all 3 BUTTONS upon load
+  
+  
+  //********************drawing
+     $('.closeDraw').click(function(e) { //click event; 
+   console.log(e); 
+   console.log(e.target); 
+    if (e.target !=this) return;
+	
+   if ($('#drawClicknav.click-nav .js ul').is(':hidden')) {  //mo added 
+ $('#drawClicknav.click-nav .js ul').slideDown(200);   //take 2 seconds to toggle down block; //slide toggle does the opposite of what the state is. 
+    $('#drawClicker.clicker').toggleClass('active'); //add active to clicker class
+    e.stopPropagation(); //like a return false
+ console.log("show: clicked only the draw button, not anything else")
+}
+
+
+//if visible
+   else if ($('#drawClicknav.click-nav .js ul').is(':visible')) {
+           $('#drawClicknav.click-nav .js ul').slideUp();    //slide up the drop down (.js ul)
+            $('#drawClicker.clicker').removeClass('active');   //get rid of active class since no longer in use
+			console.log("hide: clicked only the draw button, not anything else")
+   
+   }
+
+ });
+  
+  
+  
+  //for drawing
+  /*
+  $('#drawClicknav.click-nav .js').click(function(e) { //click event; when click on this nav... the drawing id div with click nav class js
+    $('#drawClicknav.click-nav .js ul').slideToggle(200);   //take 2 seconds to toggle down block; the ul in the drawing id div with click nav class js
+    $('#drawClicker.clicker').toggleClass('active'); //add active to clicker class, and after click  the geodrop go from no display to block display; not sure what adding active does....
+    e.stopPropagation(); //like a return false, so the toggle freezes and doesn't go back up automatically after 2 seconds
+  });
+  
+  
+  
+    $(document).click(function() {  //if click anywhere in document it will close too...
+    //this is fine for draw
+    if ($('#drawClicknav.click-nav .js ul').is(':visible')) { //check to see if drop down  (.js ul)is visible, if it is, do the function
+      $('#drawClicknav.click-nav .js ul', this).slideUp();    //slide up the drop down (.js ul)
+      $('#drawClicker.clicker').removeClass('active');   //get rid of active class since no longer in use
+    } })
+	
+	*/
+	
+  //***************drawing
+  
+  
+  // *************** text
+   $('.closeText').click(function(e) { //click event; 
+   console.log(e); 
+   console.log(e.target); 
+    if (e.target !=this) return;
+	
+   if ($('#textClicknav.click-nav .js ul').is(':hidden')) {  //mo added 
+ $('#textClicknav.click-nav .js ul').slideDown(200);   //take 2 seconds to toggle down block; //slide toggle does the opposite of what the state is. 
+    $('#textClicker.clicker').toggleClass('active'); //add active to clicker class
+    e.stopPropagation(); //like a return false
+ console.log("show: clicked only the text button, not anything else")
+}
+
+
+//if visible
+   else if ($('#textClicknav.click-nav .js ul').is(':visible')) {
+           $('#textClicknav.click-nav .js ul').slideUp();    //slide up the drop down (.js ul)
+            $('#textClicker.clicker').removeClass('active');   //get rid of active class since no longer in use
+			console.log("hide: clicked only the text button, not anything else")
+   
+   }
+
+ });
+  //for add text
+  
+  
+    // *************** text
+  
+  
+  
+  // ******************************measure
+  //i think these two functions are conflicting...put them together... slide toggle may be a conflict. 
+  //for measure
+   $('.closeMeas').click(function(e) { //click event; 
+   console.log(e); 
+   console.log(e.target); 
+    if (e.target !=this) return;
+	
+   if ($('#measClicknav.click-nav .js ul').is(':hidden')) {  //mo added 
+ $('#measClicknav.click-nav .js ul').slideDown(200);   //take 2 seconds to toggle down block; //slide toggle does the opposite of what the state is. 
+    $('#measClicker.clicker').toggleClass('active'); //add active to clicker class
+    e.stopPropagation(); //like a return false
+ console.log("show: clicked only the measure button, not anything else")
+}
+
+
+//if visible
+   else if ($('#measClicknav.click-nav .js ul').is(':visible')) {
+           $('#measClicknav.click-nav .js ul').slideUp();    //slide up the drop down (.js ul)
+            $('#measClicker.clicker').removeClass('active');   //get rid of active class since no longer in use
+			console.log("hide: clicked only the measure button, not anything else")
+   
+   }
+
+ });
+ 
+ //span.dijitReset.dijitInline.dijitIcon.areaIcon
+ //div.esriMeasurementButtonPane
+  $('#measClicknav.click-nav .js ul.measDrop').click(function() {
+  console.log("area icon clicked"); 
+  })
+    // ******************************measure
+  
+  
+});
+	</script>
+	
+	
+
+
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-40778466-7']);
+_gaq.push(['_trackPageview']);
+(function () {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+
+	
+	
+</head>
+<body class="calcite app-loading">
+    <!--The ArcGIS API for JavaScript provides bidirectional support.  When viewing the application in an right to left (rtl) language like Hebrew and Arabic the map needs to remain in left-to-right (ltr) mode. Specify this by setting the dir attribute on the div to ltr. -->
+    <div class="loading-indicator">
+        <div class="loading-error">
+            <div class="icon-emo-unhappy"></div>
+            <div class="error-message-text" id="error_message"></div>
+        </div>
+    </div>
+    <div id="bc_outer" class="border-container-outer">
+        <div id="cp_outer_left" class="content-pane-left">
+            <div id="drawer_menus"></div>
+        </div>
+        <div id="cp_outer_center" class="content-pane-center">
+            <div id="geoData"></div>
+            <div class="top-bar">
+                <div id="hamburger_button" class="hamburger-button toggle-grey">
+                    <div class="icon-menu-1"></div>
+                </div>
+                <div id="title" class="app-title"></div>
+                <div class="top-menu-right">
+				
+                    
+					<div id="measClicknav" class="click-nav" style="position:absolute; left:55px; top:-5px">
+  <ul class="no-js">
+    <li>
+      <a href="#" id="measClicker" class="clicker" style="padding:5px; width:65px"><div class="closeMeas">Measure</div></a>
+      <ul class = "measDrop" style="display:block">
+					<div id="measureButton" style="right:60px;"></div>
+						</ul>
+    </li>
+  </ul>
+</div>
+					
+					<div id="textClicknav" class="click-nav" style="position:absolute; left:140px; top:50px">
+  <ul class="no-js">
+    <li>
+      <a href="#" id="textClicker" class="clicker" style="padding:5px; width:40px"><div class="closeText">Text</div></a>
+      <ul class = "textDrop" style="display:block">
+							<div id="addtextdiv">
+						<div id="header" dojotype="dijit.layout.ContentPane" region= "top" style="height:100px;">
+            Enter Text:
+                                  <input dojotype="dijit.form.TextBox" value="Text Here" id="tsText" />
+								  <div id="TextButton"><button id="TextSubmit" data-dojo-type="dijit/form/Button" type="button">Add to Map</button></div>
+								  
+            </div></div>
+			</ul>
+    </li>
+  </ul>
+</div>
+			
+			
+						<div id="printButton"></div>
+                    <div class="locate-box">
+                        <div id="geocoderSearch">
+						</div>
+						
+				
+                    </div>
+                    <div id="mobileGeocoderIcon" class="mobile-geocoder-icon icon-right">
+                        <div id="mobileGeocoderIconContainer" class="button-container toggle-grey icon-search-1"></div>
+                    </div>
+					
+		<div id="drawClicknav" class="click-nav" style="position:absolute; top:50px">
+  <ul class="no-js">
+    <li>
+      <a href="#" id="drawClicker" class="clicker" style="padding:5px; width:40px"><div class="closeDraw">Draw</div></a>
+      <ul class = "geoDrop">
+	  <div id="info1">
+	  <div id="DrawButtons1">
+        <button id="Point" STYLE="background-color:#007ac2; color: white; border: 0">Point</button>
+        <button id="Line" STYLE="background-color:#007ac2; color: white; border: 0">Line</button>
+        <button id="Polygon" STYLE="background-color:#007ac2; color: white; border: 0">Polygon</button>
+		</div>
+		</div>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+                    <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div id="mobileSearch" class="mobile-locate-box-hidden">
+                <div class="mobile-search-container">
+                    <div id="geocoderMobile"></div>
+                    <div id="btnCloseGeocoder" class="close-geocoder-button">Cancel</div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div id="mapButtons" class="map-buttons">
+                <div id="LocateButton"></div>
+                <div id="HomeButton"></div>
+            </div>
+            <div id="BasemapToggle"></div>
+            <div id="mapDiv" dir="ltr">
+                <div id="swipeDiv"></div>
+            </div>
+			 
+        </div>
+    </div>
+    <script type="text/javascript">
+        var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        var dojoConfig = {
+            async: true,
+            //The location.pathname.replace() logic below may look confusing but all its doing is
+            // enabling us to load the api from a CDN and load local modules from the correct location.
+            packages: [{
+                name: "application",
+                location: package_path + '/js'
+            }, {
+                name: "config",
+                location: package_path + '/config'
+            }, {
+                name: "arcgis_templates",
+                location: package_path + '/..'
+            }]
+        };
+    </script>
+    <script type="text/javascript" src="//js.arcgis.com/3.12/init.js"></script>
+    <script type="text/javascript">
+        require([
+            "application/templateOptions",
+            "application/template",
+            "application/main"
+        ], function(
+            templateOptions,
+            Template,
+            Main
+        ){
+            // create the template. This will take care of all the logic required for template applications 
+            var myTemplate = new Template(templateOptions);
+            // create my main application. Start placing your logic in the main.js file.
+            var myApp = new Main();
+            // start template
+            myTemplate.startup().then(function(config) {
+                // The config object contains the following properties: helper services, (optionally) 
+                // i18n, appid, webmap and any custom values defined by the application. 
+                // In this example we have one called theme. 
+                myApp.startup(config);
+            }, function(error) {
+                // something went wrong. Let's report it.
+                myApp.reportError(error);
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-215788-4']);
+         //_gaq.push(['_setDomainName', 'esri.com']);
+        _gaq.push(['_trackPageview']);
+        _gaq.push(['_trackPageLoadTime']);
+        (function() {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!--[if lt IE 9]><script type="text/javascript" src="js/respond.min.js"></script><![endif]-->
+</body>
+</html>
